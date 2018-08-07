@@ -1,0 +1,39 @@
+version: 0.2
+
+env:
+  variables:
+    DEP_VERSION: "0.4.1"
+    S3_BUCKET: "cliche-cloud-sam-test"
+
+phases:
+
+  install:
+    commands:
+      # Print all environment variables (handy for AWS CodeBuild logs)
+      - env
+
+      # AWS Codebuild Go images use /go for the $GOPATH so let's copy our
+      # application source code into that directory structure.
+      - mkdir -p /go/src/lambda
+      - ln -s "${CODEBUILD_SRC_DIR}/lambdas/golang/src/lambda" /go/src/lambda
+      # Install go deps
+      - make setup-golang
+
+  pre_build:
+    commands:
+      # Fetch all dependencies
+      - make install-golang
+
+  build:
+    commands:
+      # Fetch all dependencies
+      - make build-golang
+
+  post_build:
+    commands:
+      # Package our application with AWS SAM
+      - aws cloudformation package --template-file template.yml --s3-bucket ${S3_BUCKET} --output-template-file packaged.yml
+
+artifacts:
+  files:
+    - packaged.yml
