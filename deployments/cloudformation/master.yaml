@@ -1,0 +1,40 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >
+  This template deploys CI/CD for the application which will
+  be used to deploy the final API gateway
+
+Parameters:
+
+  CodeBuildImage:
+    Type: String
+    Description: Image used for CodeBuild project.
+    Default: "carlosroman/aws-lambda-benchmark"
+
+  GitHubRepoName:
+    Type: String
+    Description: The GitHub repo name
+
+  GitHubBranch:
+    Type: String
+    Description: The GitHub repo branch code pipelines should watch for changes on
+    Default: master
+  
+  GitHubToken:
+    Type: String
+    Description: "Secret. OAuthToken with access to Repo. Long string of characters and digits. Go to https://github.com/settings/tokens"
+    NoEcho: true
+
+  GitHubUser:
+    Type: String
+    Description: GitHub UserName. This username must have access to the GitHubToken.
+
+Resources:
+
+  artifactBucket:
+    Type: AWS::CloudFormation::Stack
+    Properties:      
+      TemplateURL: https://s3.amazonaws.com/aws-lambda-benchmark/artifact-bucket.yaml
+      Parameters:
+        AppName: !Ref AWS::StackName

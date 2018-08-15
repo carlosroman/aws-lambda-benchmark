@@ -1,0 +1,54 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >
+  This template deploys an S3 bucket for storing
+  artifacts
+
+Parameters:
+
+  AppName:
+      Type: String
+      Description: Name of the application.
+      MinLength: "1"
+      MaxLength: "80"
+      AllowedPattern: "[A-Za-z0-9-]+"
+      ConstraintDescription: Malformed input parameter. AppName must only contain upper and lower case letters, numbers, and -.
+
+Resources:
+
+  artifactS3Bucket:
+    Description: Creating Amazon S3 bucket for AWS CodePipeline artifacts
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Sub "${AWS::AccountId}-${AWS::Region}-${AppName}"
+      VersioningConfiguration:
+        Status: Enabled
+
+  artifactS3BucketPolicy:
+    DependsOn: [artifactS3Bucket]
+    Description: Setting Amazon S3 bucket policy for AWS CodePipeline access
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref artifactS3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Id: SSEAndSSLPolicy
+        Statement:
+        - Sid: DenyInsecureConnections
+          Effect: Deny
+          Principal: "*"
+          Action: s3:*
+          Resource: !Sub "arn:aws:s3:::${artifactS3Bucket}/*"
+          Condition:
+            Bool:
+              aws:SecureTransport: false
+
+Outputs:
+
+  ArtifactS3BucketName:
+    Value: !Ref artifactS3Bucket
+
+  ArtifactS3BucketArn:
+    Value: !GetAtt artifactS3Bucket.Arn
