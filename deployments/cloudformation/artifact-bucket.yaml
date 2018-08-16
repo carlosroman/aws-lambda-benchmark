@@ -2,8 +2,8 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Description: >
-  This template deploys an S3 bucket for storing
-  artifacts
+  This template deploys an S3 bucket for storing artifacts from the build
+  pipeline
 
 Parameters:
 

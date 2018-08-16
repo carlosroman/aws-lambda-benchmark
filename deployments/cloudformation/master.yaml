@@ -2,8 +2,8 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Description: >
-  This template deploys CI/CD for the application which will
-  be used to deploy the final API gateway
+  This template deploys CI/CD for the application which will be used to deploy
+  the final API gateway
 
 Parameters:
 
@@ -16,7 +16,7 @@ Parameters:
     Type: String
     Description: The GitHub repo name
 
-  GitHubBranch:
+  GitHubRepoBranch:
     Type: String
     Description: The GitHub repo branch code pipelines should watch for changes on
     Default: master
@@ -32,9 +32,36 @@ Parameters:
 
 Resources:
 
+  pipelineRoles:
+    Type: AWS::CloudFormation::Stack
+    Properties:      
+      TemplateURL: https://s3.amazonaws.com/aws-lambda-benchmark/pipeline-roles.yaml
+      Parameters:
+        AppName: !Ref AWS::StackName
+
   artifactBucket:
     Type: AWS::CloudFormation::Stack
     Properties:      
       TemplateURL: https://s3.amazonaws.com/aws-lambda-benchmark/artifact-bucket.yaml
       Parameters:
         AppName: !Ref AWS::StackName
+
+  pipeline:
+    Type: AWS::CloudFormation::Stack
+    Properties:      
+      TemplateURL: https://s3.amazonaws.com/aws-lambda-benchmark/pipeline.yaml
+      Parameters:
+        AppName: !Ref AWS::StackName
+        GitHubRepoName: !Ref GitHubRepoName
+        GitHubRepoBranch: !Ref GitHubRepoBranch
+        GitHubToken: !Ref GitHubToken
+        GitHubUser: !Ref GitHubUser
+        ArtifactS3Bucket: !GetAtt artifactBucket.Outputs.ArtifactS3BucketName
+        CodeBuildImage: !Ref CodeBuildImage
+        CodePipelineRole: !GetAtt pipelineRoles.Outputs.CodePipelineRole
+        CodeBuildRole: !GetAtt pipelineRoles.Outputs.CodeBuildRole
+
+Outputs:
+
+  PipelineUrl:
+    Value: !GetAtt pipeline.Outputs.PipelineUrl

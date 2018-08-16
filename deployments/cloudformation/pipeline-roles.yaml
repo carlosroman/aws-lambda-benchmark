@@ -1,0 +1,85 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >
+  This template deploys the roles that will be needed for the pipeline
+
+Parameters:
+
+  AppName:
+    Type: String
+    Description: Name of the application.
+    MinLength: "1"
+    MaxLength: "80"
+    AllowedPattern: "[A-Za-z0-9-]+"
+    ConstraintDescription: Malformed input parameter. AppName must only contain upper and lower case letters, numbers, and -.
+
+Resources:
+
+  codeBuildTrustRole:
+    Description: Creating service role in IAM for AWS CodeBuild
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AppName}-codebuild-role
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: codebuild.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+
+  codeBuildRolePolicy:
+    Description: Setting IAM policy for the service role for AWS CodeBuild
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AppName}-CodeBuildRolePolicy-${AWS::Region}
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action:
+          - logs:CreateLogGroup
+          - logs:CreateLogStream
+          - logs:PutLogEvents
+          Resource:
+          - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*
+      Roles:
+      - !Ref codeBuildTrustRole
+
+  codePipelineTrustRole:
+    Description: Creating service role in IAM for AWS CodePipeline
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AppName}-codepipeline-role
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: codepipeline.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+
+  codePipelineRolePolicy:
+    Description: Setting IAM policy for the service role for AWS CodePipeline
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AppName}-CodePipelineRolePolicy-${AWS::Region}
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action:
+          - codebuild:StartBuild
+          - codebuild:BatchGetBuilds
+          Resource: "*"
+      Roles:
+      - !Ref codePipelineTrustRole
+
+Outputs:
+
+  CodeBuildRole:
+    Description: Role for code build to build
+    Value: !GetAtt codeBuildTrustRole.Arn
+
+  CodePipelineRole:
+    Description: Role for code pipeline
+    Value: !GetAtt codePipelineTrustRole.Arn

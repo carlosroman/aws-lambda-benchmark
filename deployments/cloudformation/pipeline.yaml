@@ -1,0 +1,121 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Template for CI/CD of AWS Lambda Benchmark"
+
+Parameters:
+
+  AppName:
+    Type: String
+    Description: Name of the application.
+    MinLength: "1"
+    MaxLength: "80"
+    AllowedPattern: "[A-Za-z0-9-]+"
+    ConstraintDescription: Malformed input parameter. AppName must only contain upper and lower case letters, numbers, and -.
+
+  GitHubRepoName:
+    Type: String
+    Description: The GitHub repo name
+
+  GitHubRepoBranch:
+    Type: String
+    Description: The GitHub repo branch code pipelines should watch for changes on
+    Default: master
+  
+  GitHubToken:
+    Type: String
+    Description: "Secret. OAuthToken with access to Repo. Long string of characters and digits. Go to https://github.com/settings/tokens"
+    NoEcho: true
+
+  GitHubUser:
+    Type: String
+    Description: GitHub UserName. This username must have access to the GitHubToken.
+  
+  ArtifactS3Bucket:
+    Type: String
+    Description: The S3 bucket name to store the output artifacts
+
+  CodeBuildImage:
+    Type: String
+    Description: Image used for CodeBuild project.
+    Default: "carlosroman/aws-lambda-benchmark"
+
+  CodePipelineRole:
+    Type: String
+    Description: Role the pipeline will use
+
+  CodeBuildRole:
+    Type: String
+    Description: Role for code build
+
+Resources:
+
+  pipeline:
+    Description: Creating a deployment pipeline for the project in AWS CodePipeline
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub ${AppName}-pipeline
+      RoleArn: !Ref CodePipelineRole
+      Stages:
+      - Name: Source
+        Actions:
+        - Name: GitHub
+          InputArtifacts: []
+          ActionTypeId:
+            Category: Source
+            Provider: GitHub
+            Owner: ThirdParty
+            Version: "1"
+          OutputArtifacts:
+          - Name: !Sub "${AppName}-SourceArtifact"
+          Configuration:
+            Repo: !Ref GitHubRepoName
+            Branch: !Ref GitHubRepoBranch
+            OAuthToken: !Ref GitHubToken
+            Owner: !Ref GitHubUser
+          RunOrder: 1
+      - Name: Build
+        Actions:
+        - Name: Build
+          InputArtifacts:
+          - Name: !Sub "${AppName}-SourceArtifact"
+          ActionTypeId:
+            Category: Build
+            Provider: CodeBuild
+            Owner: AWS
+            Version: "1"
+          OutputArtifacts:
+          - Name: !Sub "${AppName}-BuildArtifact"
+          Configuration:
+            ProjectName: !Sub "${AppName}-build"
+          RunOrder: 1
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactS3Bucket
+
+  # CodeBuildProject:
+  #   Description: Creating AWS CodeBuild project
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     Artifacts:
+  #       Type: CODEPIPELINE
+  #     Description: !Sub "Building stage for ${AppName}."
+  #     Environment:
+  #       ComputeType: BUILD_GENERAL1_SMALL
+  #       EnvironmentVariables:
+  #         - Name: S3_BUCKET
+  #           Value: !Ref ArtifactS3Bucket
+  #       Image: !Ref CodeBuildImage
+  #       Type: LINUX_CONTAINER
+  #     Name: !Sub "${AppName}-build"
+  #     ServiceRole: !Ref CodeBuildRole
+  #     Source:
+  #       Type: CODEPIPELINE
+  #     Tags:
+  #       - Key: app-name
+  #         Value: !Ref AppName
+  #     TimeoutInMinutes: 5
+
+Outputs:
+
+  PipelineUrl:
+    Value: !Sub https://console.aws.amazon.com/codepipeline/home?region=${AWS::Region}#/view/${pipeline}
