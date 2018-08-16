@@ -76,10 +76,18 @@ Resources:
 
 Outputs:
 
-  CodeBuildRole:
+  CodeBuildRoleArn:
     Description: Role for code build to build
     Value: !GetAtt codeBuildTrustRole.Arn
 
-  CodePipelineRole:
+  CodeBuildRoleName:
+    Description: Role for code build to build
+    Value: !Ref codeBuildTrustRole
+
+  CodePipelineRoleArn:
     Description: Role for code pipeline
     Value: !GetAtt codePipelineTrustRole.Arn
+
+  CodePipelineRoleName:
+    Description: Role for code pipeline
+    Value: !Ref codePipelineTrustRole

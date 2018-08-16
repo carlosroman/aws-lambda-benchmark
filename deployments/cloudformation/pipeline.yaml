@@ -39,13 +39,13 @@ Parameters:
     Description: Image used for CodeBuild project.
     Default: "carlosroman/aws-lambda-benchmark"
 
-  CodePipelineRole:
+  CodePipelineRoleArn:
     Type: String
-    Description: Role the pipeline will use
+    Description: Role Arn the pipeline will use
 
-  CodeBuildRole:
+  CodeBuildRoleArn:
     Type: String
-    Description: Role for code build
+    Description: Role Arn for code build
 
 Resources:
 
@@ -54,7 +54,7 @@ Resources:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       Name: !Sub ${AppName}-pipeline
-      RoleArn: !Ref CodePipelineRole
+      RoleArn: !Ref CodePipelineRoleArn
       Stages:
       - Name: Source
         Actions:

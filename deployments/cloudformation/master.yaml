@@ -45,6 +45,8 @@ Resources:
       TemplateURL: https://s3.amazonaws.com/aws-lambda-benchmark/artifact-bucket.yaml
       Parameters:
         AppName: !Ref AWS::StackName
+        CodePipelineRoleName: !GetAtt pipelineRoles.Outputs.CodePipelineRoleName
+        CodeBuildRoleName: !GetAtt pipelineRoles.Outputs.CodeBuildRoleName
 
   pipeline:
     Type: AWS::CloudFormation::Stack
@@ -58,8 +60,8 @@ Resources:
         GitHubUser: !Ref GitHubUser
         ArtifactS3Bucket: !GetAtt artifactBucket.Outputs.ArtifactS3BucketName
         CodeBuildImage: !Ref CodeBuildImage
-        CodePipelineRole: !GetAtt pipelineRoles.Outputs.CodePipelineRole
-        CodeBuildRole: !GetAtt pipelineRoles.Outputs.CodeBuildRole
+        CodePipelineRoleArn: !GetAtt pipelineRoles.Outputs.CodePipelineRoleArn
+        CodeBuildRoleArn: !GetAtt pipelineRoles.Outputs.CodeBuildRoleArn
 
 Outputs:
 

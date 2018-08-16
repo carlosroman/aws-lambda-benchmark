@@ -15,6 +15,14 @@ Parameters:
       AllowedPattern: "[A-Za-z0-9-]+"
       ConstraintDescription: Malformed input parameter. AppName must only contain upper and lower case letters, numbers, and -.
 
+  CodePipelineRoleName:
+    Type: String
+    Description: Role name the pipeline will use
+
+  CodeBuildRoleName:
+    Type: String
+    Description: Role name for code build
+
 Resources:
 
   artifactS3Bucket:
@@ -27,7 +35,6 @@ Resources:
         Status: Enabled
 
   artifactS3BucketPolicy:
-    DependsOn: [artifactS3Bucket]
     Description: Setting Amazon S3 bucket policy for AWS CodePipeline access
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -45,6 +52,23 @@ Resources:
             Bool:
               aws:SecureTransport: false
 
+  codePipelineAccessPolicy:
+    Description: Setting IAM policy to allow full access to bucket
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub  ${AppName}-CodePipelineS3AccessRolePolicy-${AWS::Region}
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action:
+          - s3:PutObject
+          - s3:GetObject
+          - S3:GetObjectVersion
+          Resource:
+          - !Sub "arn:aws:s3:::${artifactS3Bucket}/*"
+      Roles:
+      - !Ref CodePipelineRoleName
+ 
 Outputs:
 
   ArtifactS3BucketName:
