@@ -52,11 +52,11 @@ Resources:
             Bool:
               aws:SecureTransport: false
 
-  codePipelineAccessPolicy:
-    Description: Setting IAM policy to allow full access to bucket
+  artifactS3BucketAccessPolicy:
+    Description: Setting IAM policy to allow full access to artifact bucket
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: !Sub  ${AppName}-CodePipelineS3AccessRolePolicy-${AWS::Region}
+      PolicyName: !Sub  ${AppName}-Access${artifactS3Bucket}Bucket-${AWS::Region}
       PolicyDocument:
         Statement:
         - Effect: Allow
@@ -68,6 +68,7 @@ Resources:
           - !Sub "arn:aws:s3:::${artifactS3Bucket}/*"
       Roles:
       - !Ref CodePipelineRoleName
+      - !Ref CodeBuildRoleName
  
 Outputs:
 
