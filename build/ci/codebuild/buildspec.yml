@@ -10,6 +10,7 @@ phases:
     commands:
       # Print all environment variables (handy for AWS CodeBuild logs)
       - env | sort
+      - pwd
 
       # AWS Codebuild Go images use /go for the $GOPATH so let's copy our
       # application source code into that directory structure.
@@ -27,7 +28,7 @@ phases:
   post_build:
     commands:
       # Package our application with AWS SAM
-      - aws cloudformation package --template-file api/aws-sam/template.yaml --s3-bucket ${S3_BUCKET} --output-template-file packaged.yml
+      - aws cloudformation package --template-file "${CODEBUILD_SRC_DIR}/api/aws-sam/template.yaml" --s3-bucket ${S3_BUCKET} --output-template-file packaged.yml
 
 artifacts:
   files:

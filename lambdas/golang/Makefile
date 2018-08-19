@@ -1,7 +1,7 @@
 .PHONY: setup install build clean
 
 clean:
-	@rm -f $(shell go env GOPATH)/src/lambda/target
+	@rm -rf $(shell go env GOPATH)/src/lambda/target
 
 setup:
 	@echo "Installing deps version '${DEP_VERSION}'"
@@ -10,7 +10,7 @@ setup:
 	@chmod +x $(shell go env GOPATH)/bin/dep
 
 install:
-	@(cd $(shell go env GOPATH)/src/lambda; dep ensure)
+	@(cd ./src/lambda; dep ensure)
 
 build:
-	@go build -o $(shell go env GOPATH)/src/lambda/target/main lambda
+	@go build -v -o ./src/lambda/target/main lambda
