@@ -15,6 +15,7 @@ RUN apk --no-cache --upgrade add ca-certificates \
     maven \
     openjdk8 \
     less \
+    tree \
     py2-pip \
     musl-dev \
     && pip install --upgrade --no-cache-dir pip \
