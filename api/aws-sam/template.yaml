@@ -1,11 +1,22 @@
+---
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
+
+Description: >
+  This template deploys an API gateway with the lambdas attached to it
+
+Globals:
+  Function:
+    MemorySize: 256
+    Timeout: 25
+    Tracing: Active
 
 Resources:
   HelloFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lambdas/golang/src/lambda/main
+      Handler: main
+      CodeUri: ../../lambdas/golang/src/lambda/target
       Runtime: go1.x
       Events:
         GetEvent:
