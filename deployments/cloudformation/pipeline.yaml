@@ -12,6 +12,14 @@ Parameters:
     AllowedPattern: '[A-Za-z0-9-]+'
     ConstraintDescription: Malformed input parameter. AppName must only contain upper and lower case letters, numbers, and -.
 
+  AppStackName:
+    Type: String
+    Description: Name of stack for the application.
+    MinLength: "1"
+    MaxLength: "80"
+    AllowedPattern: "[A-Za-z0-9-]+"
+    ConstraintDescription: Malformed input parameter. AppAppStackName must only contain upper and lower case letters, numbers, and -.
+
   GitHubRepoName:
     Type: String
     Description: The GitHub repo name
@@ -46,6 +54,10 @@ Parameters:
   CodeBuildRoleArn:
     Type: String
     Description: Role Arn for code build
+
+  LambdaDeployRoleArn:
+    Type: String
+    Description: Role Arn for deploying the lambdas
 
 Resources:
 
@@ -108,6 +120,25 @@ Resources:
           - Name: !Sub "${AppName}-BuildArtifact"
           Configuration:
             ProjectName: !Ref codeBuildProject
+          RunOrder: 1
+      - Name: Deploy
+        Actions:
+        - Name: CreateChangeset
+          InputArtifacts:
+          - Name: !Sub "${AppName}-BuildArtifact"
+          ActionTypeId:
+            Category: Deploy
+            Provider: CloudFormation
+            Owner: AWS
+            Version: "1"
+          OutputArtifacts: []
+          Configuration:
+            StackName: !Ref AppStackName
+            ActionMode: CHANGE_SET_REPLACE
+            RoleArn: !Ref LambdaDeployRoleArn
+            ChangeSetName: !Sub ${AppStackName}-changeset
+            Capabilities: CAPABILITY_NAMED_IAM
+            TemplatePath: !Sub "${AppName}-BuildArtifact::packaged.yml"
           RunOrder: 1
       ArtifactStore:
         Type: S3

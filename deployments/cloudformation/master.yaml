@@ -38,6 +38,7 @@ Resources:
       TemplateURL: https://s3.amazonaws.com/aws-lambda-benchmark/pipeline-roles.yaml
       Parameters:
         AppName: !Ref AWS::StackName
+        AppStackName: !Sub ${AWS::StackName}-serverless-stack
 
   artifactBucket:
     Type: AWS::CloudFormation::Stack
@@ -47,6 +48,7 @@ Resources:
         AppName: !Ref AWS::StackName
         CodePipelineRoleName: !GetAtt pipelineRoles.Outputs.CodePipelineRoleName
         CodeBuildRoleName: !GetAtt pipelineRoles.Outputs.CodeBuildRoleName
+        LambdaDeployRoleName: !GetAtt pipelineRoles.Outputs.LambdaDeployRoleName
 
   pipeline:
     Type: AWS::CloudFormation::Stack
@@ -54,6 +56,7 @@ Resources:
       TemplateURL: https://s3.amazonaws.com/aws-lambda-benchmark/pipeline.yaml
       Parameters:
         AppName: !Ref AWS::StackName
+        AppStackName: !Sub ${AWS::StackName}-serverless-stack
         GitHubRepoName: !Ref GitHubRepoName
         GitHubRepoBranch: !Ref GitHubRepoBranch
         GitHubToken: !Ref GitHubToken
@@ -62,6 +65,7 @@ Resources:
         CodeBuildImage: !Ref CodeBuildImage
         CodePipelineRoleArn: !GetAtt pipelineRoles.Outputs.CodePipelineRoleArn
         CodeBuildRoleArn: !GetAtt pipelineRoles.Outputs.CodeBuildRoleArn
+        LambdaDeployRoleArn: !GetAtt pipelineRoles.Outputs.LambdaDeployRoleArn
 
 Outputs:
 

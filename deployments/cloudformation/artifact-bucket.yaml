@@ -23,6 +23,10 @@ Parameters:
     Type: String
     Description: Role name for code build
 
+  LambdaDeployRoleName:
+    Type: String
+    Description: Role name for code build
+
 Resources:
 
   artifactS3Bucket:
@@ -69,6 +73,7 @@ Resources:
       Roles:
       - !Ref CodePipelineRoleName
       - !Ref CodeBuildRoleName
+      - !Ref LambdaDeployRoleName
  
 Outputs:
 

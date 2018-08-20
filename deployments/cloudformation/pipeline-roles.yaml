@@ -14,6 +14,14 @@ Parameters:
     AllowedPattern: "[A-Za-z0-9-]+"
     ConstraintDescription: Malformed input parameter. AppName must only contain upper and lower case letters, numbers, and -.
 
+  AppStackName:
+    Type: String
+    Description: Name of stack for the application.
+    MinLength: "1"
+    MaxLength: "80"
+    AllowedPattern: "[A-Za-z0-9-]+"
+    ConstraintDescription: Malformed input parameter. AppStackName must only contain upper and lower case letters, numbers, and -.
+
 Resources:
 
   codeBuildTrustRole:
@@ -71,23 +79,94 @@ Resources:
           - codebuild:StartBuild
           - codebuild:BatchGetBuilds
           Resource: "*"
+        - Effect: Allow
+          Action:
+          - iam:PassRole
+          Resource: !GetAtt lambdaDeployTrustRole.Arn
+        - Effect: Allow
+          Action:
+          - cloudformation:Describe*
+          - cloudformation:CreateChangeSet
+          Resource: !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AppStackName}/*"
       Roles:
       - !Ref codePipelineTrustRole
+
+
+  lambdaDeployTrustRole:
+    Description: Creating service role in IAM for AWS CodePipeline
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AppName}-LambdaDeploy-role
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: cloudformation.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSCloudFormationReadOnlyAccess
+      Path: /
+
+  lambdaDeployRolePolicy:
+    Description: Setting IAM policy for for AWS CodePipeline to deploy Lambdas
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub ${AppName}-LambdaDeployRolePolicy-${AWS::Region}
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action:
+          - cloudformation:Create*
+          - cloudformation:ExecuteChangeSet
+          - cloudformation:SetStackPolicy
+          - cloudformation:SignalResource
+          - cloudformation:StopStackSetOperation
+          - cloudformation:Update*
+          Resource: "*"
+        - Effect: Allow
+          Action:
+          - apigateway:*
+          Resource: !Sub "arn:aws:apigateway:${AWS::Region}::*"
+        - Effect: Allow
+          Action:
+          - iam:GetRole
+          - iam:CreateRole
+          - iam:DeleteRole
+          Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${AppName}-*"
+        - Effect: Allow
+          Action:
+          - iam:AttachRolePolicy
+          - iam:DetachRolePolicy
+          Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${AppName}-*"
+        - Effect: Allow
+          Action:
+          - iam:PassRole
+          Resource: "*"
+      Roles:
+      - !Ref lambdaDeployTrustRole
 
 Outputs:
 
   CodeBuildRoleArn:
-    Description: Role for code build to build
+    Description: Role ARN for code build to build
     Value: !GetAtt codeBuildTrustRole.Arn
 
   CodeBuildRoleName:
-    Description: Role for code build to build
+    Description: Role name for code build to build
     Value: !Ref codeBuildTrustRole
 
   CodePipelineRoleArn:
-    Description: Role for code pipeline
+    Description: Role ARN for code pipeline
     Value: !GetAtt codePipelineTrustRole.Arn
 
   CodePipelineRoleName:
-    Description: Role for code pipeline
+    Description: Role name for code pipeline
     Value: !Ref codePipelineTrustRole
+
+  LambdaDeployRoleArn:
+    Description: Role ARN for deploying lambdas
+    Value: !GetAtt lambdaDeployTrustRole.Arn
+
+  LambdaDeployRoleName:
+    Description: Role name for deploying lambdas
+    Value: !Ref lambdaDeployTrustRole
