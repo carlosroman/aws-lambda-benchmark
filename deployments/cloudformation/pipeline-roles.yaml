@@ -81,6 +81,7 @@ Resources:
           Resource: "*"
         - Effect: Allow
           Action:
+          - iam:GetRole
           - iam:PassRole
           Resource: !GetAtt lambdaDeployTrustRole.Arn
         - Effect: Allow
@@ -88,10 +89,10 @@ Resources:
           - cloudformation:Describe*
           - cloudformation:CreateChangeSet
           - cloudformation:DeleteChangeSet
+          - cloudformation:ExecuteChangeSet
           Resource: !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AppStackName}/*"
       Roles:
       - !Ref codePipelineTrustRole
-
 
   lambdaDeployTrustRole:
     Description: Creating service role in IAM for AWS CodePipeline
@@ -143,6 +144,10 @@ Resources:
           Action:
           - iam:PassRole
           Resource: "*"
+        - Effect: Allow
+          Action:
+          - lambda:*
+          Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AppName}-*"
       Roles:
       - !Ref lambdaDeployTrustRole
 

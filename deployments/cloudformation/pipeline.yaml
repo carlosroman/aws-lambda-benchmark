@@ -140,6 +140,21 @@ Resources:
             Capabilities: CAPABILITY_NAMED_IAM
             TemplatePath: !Sub "${AppName}-BuildArtifact::packaged.yml"
           RunOrder: 1
+        - Name: ExecuteChangeset
+          InputArtifacts: []
+          ActionTypeId:
+            Category: Deploy
+            Provider: CloudFormation
+            Owner: AWS
+            Version: "1"
+          OutputArtifacts: []
+          Configuration:
+            StackName: !Ref AppStackName
+            ActionMode: CHANGE_SET_EXECUTE
+            RoleArn: !Ref LambdaDeployRoleArn
+            ChangeSetName: !Sub ${AppStackName}-changeset
+          RunOrder: 2
+
       ArtifactStore:
         Type: S3
         Location: !Ref ArtifactS3Bucket
