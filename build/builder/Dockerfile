@@ -21,6 +21,7 @@ RUN apk --no-cache --upgrade add ca-certificates \
     && pip install --upgrade --no-cache-dir pip \
     && pip install --upgrade --no-cache-dir \
     awscli \
+    cfn-lint \
     && mkdir -p "$GOPATH/src" "$GOPATH/bin" \
     && chmod -R 777 "$GOPATH" \
     && wget "https://github.com/golang/dep/releases/download/v$DEP_VERSION/$DEP_BINARY" -q -O "$GOPATH/bin/dep" \

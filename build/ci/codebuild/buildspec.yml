@@ -22,6 +22,8 @@ phases:
 
   build:
     commands:
+      # Check SAM template correct
+      - make sam-lint
       # Fetch all dependencies
       - make build-golang
 
