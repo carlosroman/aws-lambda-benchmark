@@ -12,15 +12,19 @@ Globals:
     Tracing: Active
 
 Resources:
-  HelloFunction:
+
+  golang:
     Type: AWS::Serverless::Function
     Properties:
+      Description: Golang implementation of function
       Handler: main
       CodeUri: ../../lambdas/golang/src/lambda/target
-      Runtime: go1.x
+      Runtime: go1.xA
+      Policies:
+      - AWSXrayWriteOnlyAccess # Managed Policy
       Events:
         GetEvent:
           Type: Api
           Properties:
-            Path: /goalng
+            Path: /golang
             Method: post
