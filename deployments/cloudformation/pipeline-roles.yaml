@@ -139,6 +139,7 @@ Resources:
           Action:
           - iam:AttachRolePolicy
           - iam:DetachRolePolicy
+          - iam:PutRolePolicy
           Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${AppName}-*"
         - Effect: Allow
           Action:
