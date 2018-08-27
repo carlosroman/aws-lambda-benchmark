@@ -1,7 +1,7 @@
 .PHONY: info setup setup-* install install-* build build-* clean clean-* sam-*
 
 info:
-	@(env | sort --ignore-case)
+	@(env | sort -f)
 
 clean-golang:
 	@(make --directory=lambdas/golang clean)
