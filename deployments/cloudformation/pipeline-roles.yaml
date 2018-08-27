@@ -148,6 +148,10 @@ Resources:
           Action:
           - lambda:*
           Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AppName}-*"
+        - Effect: Allow
+          Action:
+          - dynamodb:*
+          Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${AppName}-*"
       Roles:
       - !Ref lambdaDeployTrustRole
 
