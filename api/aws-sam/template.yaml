@@ -10,8 +10,29 @@ Globals:
     MemorySize: 256
     Timeout: 25
     Tracing: Active
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref table
 
 Resources:
+
+  table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}
+      KeySchema:
+      - AttributeName: Artist
+        KeyType: HASH # Partition key
+      - AttributeName: 'SongTitle'
+        KeyType: RANGE # Sort key
+      AttributeDefinitions:
+      - AttributeName: Artist
+        AttributeType: S
+      - AttributeName: SongTitle
+        AttributeType: S
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
 
   golang:
     Type: AWS::Serverless::Function
@@ -23,6 +44,15 @@ Resources:
       Runtime: go1.x
       Policies:
       - AWSXrayWriteOnlyAccess # Managed Policy
+      - Statement:
+        - Sid: AllowDynamoDBReadOnly # TODO: move to own Policy to share between Lambdas
+          Effect: Allow
+          Action:
+          - dynamodb:BatchGetItem
+          - dynamodb:GetItem
+          - dynamodb:Scan
+          - dynamodb:Query
+          Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${table}'
       Events:
         GetEvent:
           Type: Api
