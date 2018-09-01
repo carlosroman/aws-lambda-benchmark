@@ -7,6 +7,7 @@ ENV GOPATH="/go" \
 RUN apk --no-cache --upgrade add ca-certificates \
     && update-ca-certificates --fresh \
     && apk --no-cache add --upgrade \
+    coreutils \
     git \
     make \
     go \
