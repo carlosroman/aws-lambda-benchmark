@@ -12,6 +12,7 @@ RUN apk --no-cache --upgrade add ca-certificates \
     coreutils \
     git \
     make \
+    docker \
     go \
     curl \
     wget \
