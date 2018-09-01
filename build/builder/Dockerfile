@@ -31,4 +31,6 @@ RUN apk --no-cache --upgrade add ca-certificates \
     && wget "https://github.com/golang/dep/releases/download/v$DEP_VERSION/$DEP_BINARY" -q -O "$GOPATH/bin/dep" \
     && chmod +x "$GOPATH/bin/dep"
 
+COPY dockerd-start.sh /usr/local/bin/
+
 ENV PATH="$GOPATH/bin:/usr/local/go/bin:$PATH"
