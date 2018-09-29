@@ -13,6 +13,8 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME: !Ref table
+        ENDPOINT_OVERRIDE:
+        REGIOM: !Sub ${AWS::Region}
 
 Resources:
 
