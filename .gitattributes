@@ -7,7 +7,7 @@
 #
 # See golang.org/issue/9281
 
-* -text
+* -text eol=lf
 
 
 #  Declare files that will always have CRLF line endings on checkout.
