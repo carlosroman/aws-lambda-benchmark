@@ -15,14 +15,6 @@ phases:
       - chmod +x build/builder/dockerd-start.sh
       - ./build/builder/dockerd-start.sh
 
-      # AWS Codebuild Go images use /go for the $GOPATH so let's copy our
-      # application source code into that directory structure.
-      - mkdir -p -v "/go/src"
-      - echo "${GOPATH}/src"
-      - ln -s "${CODEBUILD_SRC_DIR}/lambdas/golang/src/lambda" "/go/src/lambda"
-      # Fetch all golang dependencies
-      - go get -t -v lambda
-
   pre_build:
     commands:
       - docker info

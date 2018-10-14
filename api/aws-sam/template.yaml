@@ -42,7 +42,7 @@ Resources:
       FunctionName: !Sub ${AWS::StackName}-golang
       Description: Golang implementation of function
       Handler: main
-      CodeUri: ../../lambdas/golang/src/lambda/target
+      CodeUri: ../../lambdas/golang/target
       Runtime: go1.x
       Policies:
       - AWSXrayWriteOnlyAccess # Managed Policy
