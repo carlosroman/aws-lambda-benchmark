@@ -21,6 +21,7 @@ RUN apk --no-cache --upgrade add ca-certificates \
     binutils \
     gcc \
     musl-dev \
+    jq \
     && apk --no-cache add --upgrade --virtual .build-dependencies \
     python2-dev \
     py2-pip \
