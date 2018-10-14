@@ -3,6 +3,7 @@ version: 0.2
 env:
   variables:
     S3_BUCKET: "cliche-cloud-sam-test"
+    GO111MODULE: on
 
 phases:
 
