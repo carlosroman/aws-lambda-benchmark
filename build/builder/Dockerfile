@@ -20,10 +20,10 @@ RUN apk --no-cache --upgrade add ca-certificates \
     py-setuptools \
     binutils \
     gcc \
+    musl-dev \
     && apk --no-cache add --upgrade --virtual .build-dependencies \
     python2-dev \
     py2-pip \
-    musl-dev \
     && pip install --upgrade --no-cache-dir pip \
     && pip install --upgrade --no-cache-dir -r py-requirements.txt \
     && rm -rf /tmp/** \
