@@ -51,6 +51,15 @@ Resources:
           - logs:PutLogEvents
           Resource:
           - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*
+        - Effect: Allow
+          Action:
+          - cloudformation:DescribeStacks
+          Resource:
+          - !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AppName}-*
+        - Effect: Allow
+          Action:
+          - dynamodb:PutItem
+          Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${AppName}-*"
       Roles:
       - !Ref codeBuildTrustRole
 

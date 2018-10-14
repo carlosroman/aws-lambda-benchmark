@@ -83,6 +83,29 @@ Resources:
           Value: !Ref ArtifactS3Bucket
       TimeoutInMinutes: 5
 
+  dataLoadCodeBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AppName}-data-load
+      Description: CodeBuild project to load data for AWS Lambda benchmark
+      ServiceRole: !Ref CodeBuildRoleArn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: build/ci/codebuild/dataLoadBuildspec.yml
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: !Ref CodeBuildImage
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+        - Name: APP_STACK
+          Value: !Ref AppStackName
+      TimeoutInMinutes: 5
+      Cache:
+        Type: S3
+        Location: !Sub ${ArtifactS3Bucket}/cache
+
   pipeline:
     Description: Creating a deployment pipeline for the project in AWS CodePipeline
     Type: AWS::CodePipeline::Pipeline
@@ -155,6 +178,18 @@ Resources:
             RoleArn: !Ref LambdaDeployRoleArn
             ChangeSetName: !Sub ${AppStackName}-changeset
           RunOrder: 2
+        - Name: DataLoad
+          InputArtifacts:
+          - Name: !Sub "${AppName}-SourceArtifact"
+          ActionTypeId:
+            Category: Build
+            Provider: CodeBuild
+            Owner: AWS
+            Version: "1"
+          OutputArtifacts: []
+          Configuration:
+            ProjectName: !Ref dataLoadCodeBuild
+          RunOrder: 3
 
       ArtifactStore:
         Type: S3

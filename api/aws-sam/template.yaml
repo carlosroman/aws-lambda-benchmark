@@ -13,7 +13,7 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME: !Ref table
-        REGIOM: !Sub ${AWS::Region}
+        REGION: !Sub ${AWS::Region}
 
 Resources:
 
@@ -22,14 +22,14 @@ Resources:
     Properties:
       TableName: !Sub ${AWS::StackName}
       KeySchema:
-      - AttributeName: Artist
+      - AttributeName: HomeTeam
         KeyType: HASH # Partition key
-      - AttributeName: 'SongTitle'
+      - AttributeName: AwayTeam
         KeyType: RANGE # Sort key
       AttributeDefinitions:
-      - AttributeName: Artist
+      - AttributeName: HomeTeam
         AttributeType: S
-      - AttributeName: SongTitle
+      - AttributeName: AwayTeam
         AttributeType: S
       ProvisionedThroughput:
         ReadCapacityUnits: 5
@@ -61,3 +61,9 @@ Resources:
           Properties:
             Path: /golang
             Method: post
+
+Outputs:
+
+  DynamoDBTable:
+    Description: DynamoDB table for the application
+    Value: !Ref table

@@ -51,7 +51,7 @@ func main() {
 	// Initialize a session in us-west-2 that the SDK will use to load
 	// credentials from the shared credentials file ~/.aws/credentials.
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("us-west-2")},
+		Region: aws.String(os.Getenv("REGION"))},
 	)
 
 	if err != nil {
@@ -75,7 +75,7 @@ func main() {
 
 		input := &dynamodb.PutItemInput{
 			Item:      av,
-			TableName: aws.String("Games"),
+			TableName: aws.String(os.Getenv("TABLE")),
 		}
 		_, err = svc.PutItem(input)
 		if err != nil {

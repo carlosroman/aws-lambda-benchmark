@@ -1,7 +1,7 @@
 .PHONY: info setup setup-* install install-* build build-* clean clean-* sam-*
 
 load-data:
-	@(go run tools/dataloader/dataloader.go)
+	@(make --directory=tools/dataloader load-data)
 
 info:
 	@(env | sort -f)

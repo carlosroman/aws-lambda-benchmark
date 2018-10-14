@@ -1,0 +1,21 @@
+version: 0.2
+
+env:
+  variables:
+    GO111MODULE: on
+
+phases:
+
+  install:
+    commands:
+    # Print all environment variables (handy for AWS CodeBuild logs)
+    - make info
+
+  build:
+    commands:
+      - export TABLE=`aws cloudformation describe-stacks --stack-name ${APP_STACK} | jq -r -c '.Stacks[0].Outputs[] | select(.OutputKey == "DynamoDBTable").OutputValue'`
+      - make info load-data
+
+cache:
+  paths:
+  - '/go/pkg/mod/**/*'
