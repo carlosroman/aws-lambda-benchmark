@@ -5,6 +5,7 @@ load-data:
 
 info:
 	@(env | sort -f)
+	@(go version)
 
 clean-golang:
 	@(make --directory=lambdas/golang clean)
