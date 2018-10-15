@@ -59,8 +59,8 @@ Resources:
         GetEvent:
           Type: Api
           Properties:
-            Path: /golang
-            Method: post
+            Path: /golang/football/english-premier-league/season-1718/result
+            Method: get
 
 Outputs:
 
