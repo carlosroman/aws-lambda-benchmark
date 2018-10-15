@@ -1,7 +1,9 @@
 .PHONY: build clean
 
 clean:
-	@rm -rf ./target
+	@(echo Removing \`target\` dir)
+	@(rm -rf ./target)
 
-build:
-	@go build -v -o ./target/main main.go
+build: clean
+	@(echo Building Golang lambda...)
+	@(go build -v -o ./target/main main.go)
