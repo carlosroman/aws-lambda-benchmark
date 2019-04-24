@@ -16,17 +16,15 @@ RUN apk --no-cache --upgrade add ca-certificates \
     less \
     tree \
     groff \
-    python2 \
-    py-setuptools \
+    python3 \
     binutils \
     gcc \
     musl-dev \
     jq \
     && apk --no-cache add --upgrade --virtual .build-dependencies \
-    python2-dev \
-    py2-pip \
-    && pip install --upgrade --no-cache-dir pip \
-    && pip install --upgrade --no-cache-dir -r py-requirements.txt \
+    python3-dev \
+    && pip3 install --upgrade --no-cache-dir pip \
+    && pip3 install --upgrade --no-cache-dir -r py-requirements.txt \
     && rm -rf /tmp/** \
     && apk del .build-dependencies
 
