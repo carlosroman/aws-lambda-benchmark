@@ -1,17 +1,17 @@
 .PHONY: info setup setup-* install install-* build build-* clean clean-* sam-*
 
 load-data:
-	@(make --directory=tools/dataloader load-data)
+	@$(MAKE) --directory=tools/dataloader load-data
 
 info:
-	@(env | sort -f)
+	@(printenv | sort -if)
 	@(go version)
 
 clean-golang:
-	@(make --directory=lambdas/golang clean)
+	@$(MAKE) -C lambdas/golang clean
 
 build-golang:
-	@(make --directory=lambdas/golang build)
+	@$(MAKE) -C lambdas/golang build
 
 sam-lint:
 	@(cfn-lint api/aws-sam/template.yaml)
