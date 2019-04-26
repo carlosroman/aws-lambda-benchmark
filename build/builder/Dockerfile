@@ -23,6 +23,8 @@ RUN apk --no-cache --upgrade add ca-certificates \
     jq \
     && apk --no-cache add --upgrade --virtual .build-dependencies \
     python3-dev \
+    libffi-dev \
+    openssl-dev \
     && pip3 install --upgrade --no-cache-dir pip \
     && pip3 install --upgrade --no-cache-dir -r py-requirements.txt \
     && rm -rf /tmp/** \

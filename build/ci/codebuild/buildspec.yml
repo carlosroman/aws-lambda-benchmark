@@ -18,8 +18,12 @@ phases:
 
   pre_build:
     commands:
-      - docker info
+      # Check Docker running
+      - docker run --rm hello-world
+      - docker-compose version
+      # Check AWS CLI version
       - aws --version
+      # Check  AWS SAM version
       - sam --version
 
   build:
