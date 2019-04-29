@@ -48,11 +48,7 @@ func getGames() (games []Game) {
 }
 func main() {
 
-	// Initialize a session in us-west-2 that the SDK will use to load
-	// credentials from the shared credentials file ~/.aws/credentials.
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("REGION"))},
-	)
+	sess, err := session.NewSession()
 
 	if err != nil {
 		fmt.Println("Error creating session:")
@@ -61,7 +57,13 @@ func main() {
 	}
 
 	// Create DynamoDB client
-	svc := dynamodb.New(sess)
+	cfgs := aws.NewConfig().WithRegion(os.Getenv("TABLE_REGION"))
+
+	if endpoint, ok := os.LookupEnv("ENDPOINT_OVERRIDE"); ok {
+		cfgs = cfgs.WithEndpoint(endpoint)
+	}
+
+	svc := dynamodb.New(sess, cfgs)
 
 	games := getGames()
 	for _, game := range games {
@@ -75,7 +77,7 @@ func main() {
 
 		input := &dynamodb.PutItemInput{
 			Item:      av,
-			TableName: aws.String(os.Getenv("TABLE")),
+			TableName: aws.String(os.Getenv("TABLE_NAME")),
 		}
 		_, err = svc.PutItem(input)
 		if err != nil {
