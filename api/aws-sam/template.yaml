@@ -8,9 +8,13 @@ Description: >
 Parameters:
   DefaultMemorySize:
     Default: 256
+    MaxValue: 3008
+    MinValue: 128
     Type: Number
   DefaultTimeout:
     Default: 15
+    MaxValue: 900
+    MinValue: 1
     Type: Number
   EndpointOverride:
     Type: String
