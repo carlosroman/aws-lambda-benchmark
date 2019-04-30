@@ -16,8 +16,6 @@ Parameters:
     MaxValue: 900
     MinValue: 1
     Type: Number
-  EndpointOverride:
-    Type: String
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -29,7 +27,7 @@ Globals:
       Variables:
         TABLE_NAME: !Ref table
         TABLE_REGION: !Sub ${AWS::Region}
-        ENDPOINT_OVERRIDE: !Ref EndpointOverride
+        ENDPOINT_OVERRIDE: !Sub 'https://dynamodb.${AWS::Region}.amazonaws.com'
 
 Resources:
 

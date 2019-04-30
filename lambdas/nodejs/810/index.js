@@ -4,13 +4,13 @@ console.log('Loading function');
 const dynamodb = require('aws-sdk/clients/dynamodb');
 const dynamodbConfig = {
     region: process.env.TABLE_REGION,
-    endpoint: 'http://dynamodb:8000'
+    endpoint: process.env.ENDPOINT_OVERRIDE,
 };
 const docClient = new dynamodb.DocumentClient(dynamodbConfig);
 
 exports.handler = async (event) => {
+	
 	console.log(`Processing Lambda request ${event.requestContext.requestId}`);
-	console.log('Received event:', JSON.stringify(event, null, 2));
 	let data;
 	// if (!('HomeTeam' in event.queryStringParameters)) {
 	if (event.queryStringParameters.HomeTeam === undefined) {
