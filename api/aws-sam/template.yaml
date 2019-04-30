@@ -79,7 +79,7 @@ Resources:
   nodejs810:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-golang
+      FunctionName: !Sub ${AWS::StackName}-nodejs810
       Description: Golang implementation of function
       Handler: index.handler
       CodeUri: ../../lambdas/nodejs/810
