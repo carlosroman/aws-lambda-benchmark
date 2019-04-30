@@ -1,4 +1,4 @@
-package golang
+package main
 
 import (
 	"encoding/json"
@@ -44,17 +44,16 @@ type Game struct {
 }
 
 func getDynamodbClient() dynamodbiface.DynamoDBAPI {
-	sess, _ := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("REGION"))},
-	)
+	cfg := aws.NewConfig().WithRegion(os.Getenv("TABLE_REGION"))
+	if endpoint, ok := os.LookupEnv("ENDPOINT_OVERRIDE"); ok {
+		cfg = cfg.WithEndpoint(endpoint)
+	}
+	sess, _ := session.NewSession(cfg)
 	return dynamodb.New(sess)
 }
 
 // Handler is your Lambda function handler
-// It uses Amazon API Gateway request/responses provided by the aws-lambda-go/events package,
-// However you could use other event sources (S3, Kinesis etc), or JSON-decoded primitive types such as 'string'.
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
 	// stdout and stderr are sent to AWS CloudWatch Logs
 	log.Printf("Processing Lambda request %s\n", request.RequestContext.RequestID)
 	ht, ok := request.QueryStringParameters["HomeTeam"]
@@ -74,7 +73,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	input := &dynamodb.GetItemInput{
-		TableName: aws.String(os.Getenv("TABLE")),
+		TableName: aws.String(os.Getenv("TABLE_NAME")),
 		Key: map[string]*dynamodb.AttributeValue{
 			"HomeTeam": {
 				S: aws.String(ht),
@@ -117,5 +116,6 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 }
 
 func main() {
+	log.Println("Loading function")
 	lambda.Start(Handler)
 }
