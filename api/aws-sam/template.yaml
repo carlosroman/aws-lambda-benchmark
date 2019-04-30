@@ -5,15 +5,27 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   This template deploys an API gateway with the lambdas attached to it
 
+Parameters:
+  DefaultMemorySize:
+    Default: 256
+    Type: Number
+  DefaultTimeout:
+    Default: 15
+    Type: Number
+  EndpointOverride:
+    Type: String
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    MemorySize: 256
-    Timeout: 25
-    Tracing: Active
-    Environment:
+    MemorySize: !Ref DefaultMemorySize
+    Timeout: !Ref DefaultTimeout
+    Tracing: Active  # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+    Environment:  # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
       Variables:
         TABLE_NAME: !Ref table
-        REGION: !Sub ${AWS::Region}
+        TABLE_REGION: !Sub ${AWS::Region}
+        ENDPOINT_OVERRIDE: !Ref EndpointOverride
 
 Resources:
 
@@ -22,21 +34,21 @@ Resources:
     Properties:
       TableName: !Sub ${AWS::StackName}
       KeySchema:
-      - AttributeName: HomeTeam
-        KeyType: HASH # Partition key
-      - AttributeName: AwayTeam
-        KeyType: RANGE # Sort key
+        - AttributeName: HomeTeam
+          KeyType: HASH  # Partition key
+        - AttributeName: AwayTeam
+          KeyType: RANGE  # Sort key
       AttributeDefinitions:
-      - AttributeName: HomeTeam
-        AttributeType: S
-      - AttributeName: AwayTeam
-        AttributeType: S
+        - AttributeName: HomeTeam
+          AttributeType: S
+        - AttributeName: AwayTeam
+          AttributeType: S
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
   golang:
-    Type: AWS::Serverless::Function
+    Type: AWS::Serverless::Function  # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       FunctionName: !Sub ${AWS::StackName}-golang
       Description: Golang implementation of function
@@ -44,22 +56,49 @@ Resources:
       CodeUri: ../../lambdas/golang/target
       Runtime: go1.x
       Policies:
-      - AWSXrayWriteOnlyAccess # Managed Policy
-      - Statement:
-        - Sid: AllowDynamoDBReadOnly # TODO: move to own Policy to share between Lambdas
-          Effect: Allow
-          Action:
-          - dynamodb:BatchGetItem
-          - dynamodb:DescribeTable
-          - dynamodb:GetItem
-          - dynamodb:Scan
-          - dynamodb:Query
-          Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${table}'
+        - AWSXrayWriteOnlyAccess  # Managed Policy
+        - Statement:
+            - Sid: AllowDynamoDBReadOnly  # TODO: move to own Policy to share between Lambdas
+              Effect: Allow
+              Action:
+                - dynamodb:BatchGetItem
+                - dynamodb:DescribeTable
+                - dynamodb:GetItem
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${table}'
+      Events:
+        GetEvent:
+          Type: Api  # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /golang/football/english-premier-league/season-1718/result
+            Method: get
+
+  nodejs810:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-golang
+      Description: Golang implementation of function
+      Handler: index.handler
+      CodeUri: ../../lambdas/nodejs/810
+      Runtime: nodejs8.10
+      Policies:
+        - AWSXrayWriteOnlyAccess  # Managed Policy
+        - Statement:
+            - Sid: AllowDynamoDBReadOnly  # TODO: move to own Policy to share between Lambdas
+              Effect: Allow
+              Action:
+                - dynamodb:BatchGetItem
+                - dynamodb:DescribeTable
+                - dynamodb:GetItem
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${table}'
       Events:
         GetEvent:
           Type: Api
           Properties:
-            Path: /golang/football/english-premier-league/season-1718/result
+            Path: /nodejs-810/football/english-premier-league/season-1718/result
             Method: get
 
 Outputs:
