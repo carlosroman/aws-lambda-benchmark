@@ -13,7 +13,8 @@ phases:
 
   build:
     commands:
-      - export TABLE=`aws cloudformation describe-stacks --stack-name ${APP_STACK} | jq -r -c '.Stacks[0].Outputs[] | select(.OutputKey == "DynamoDBTable").OutputValue'`
+      - export TABLE_NAME=`aws cloudformation describe-stacks --stack-name ${APP_STACK} | jq -r -c '.Stacks[0].Outputs[] | select(.OutputKey == "DynamoDBTable").OutputValue'`
+      - export TABLE_REGION="$AWS_REGION"
       - make info load-data
 
 cache:
