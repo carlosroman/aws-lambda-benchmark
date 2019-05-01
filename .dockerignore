@@ -1,0 +1,11 @@
+env/
+venv/
+.git/
+.idea/
+.envrc
+.adr-dir
+npm-debug.log
+node_modules
+.python-version
+target/
+*.iml
