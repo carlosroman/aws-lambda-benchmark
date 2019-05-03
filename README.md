@@ -7,6 +7,24 @@ An attempt to create a performance testing suite for AWS lamnbdas
 This project is a set of [AWS Lambdas](https://aws.amazon.com/lambda/) written in different languages to enable benchmarking each one.
 The idea is they'll perform typical real world user cases rather than being a simple "Hello, World!" Lambda.
 
+
+## Working locally
+
+To run the stack locally you'll need:
+
+* [Docker](https://www.docker.com/)
+* [Docker Compose](https://docs.docker.com/compose/)
+* [GNU make](https://www.gnu.org/software/make/manual/make.html)
+
+Once all the tools are correctly installed you can run the following command:
+
+```sh
+$ make sam-start
+```
+
+This will spin up local [API Gateway](https://aws.amazon.com/api-gateway/) on port `3000`.
+
+
 ## Deploying the code
 
 ### Pre-reqs
