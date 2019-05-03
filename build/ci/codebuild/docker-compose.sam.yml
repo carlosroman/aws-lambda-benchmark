@@ -1,0 +1,41 @@
+---
+version: "3.5"
+
+services:
+  sam:
+    image: carlosroman/aws-lambda-benchmark:latest
+    depends_on:
+      - dynamodb
+    working_dir: /api
+    volumes:
+      - type: bind
+        source: ../../../
+        target: /api
+        read_only: true
+        consistency: cached
+      - //var/run/docker.sock://var/run/docker.sock
+    environment:
+      - AWS_DEFAULT_REGION=us-west-2
+      - AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+      - AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      - TABLE_REGION=us-west-2
+      - TABLE_NAME=test-table
+      - ENDPOINT_OVERRIDE=http://dynamodb:8000
+    entrypoint:
+      - /usr/bin/sam
+    command:
+      - local
+      - start-api
+      - --docker-network
+      - aws-lambda-benchmark
+      - --host
+      - "0.0.0.0"
+      - --docker-volume-basedir
+      - ${DOCKER_VOLUME_BASEDIR}/api/aws-sam
+      - --env-vars
+      - build/ci/codebuild/sam.env.json
+      - --skip-pull-image
+      - --template
+      - api/aws-sam/template.yaml
+    ports:
+      - 3000:3000

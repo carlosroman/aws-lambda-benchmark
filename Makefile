@@ -1,5 +1,14 @@
 .PHONY: info setup setup-* install install-* build build-* clean clean-* sam-*
 
+DOCKER_COMPOSE ?= docker-compose
+DOCKER_COMPOSE_FILE := ./build/ci/codebuild/docker-compose.yml
+DOCKER_COMPOSE_SAM_FILE := ./build/ci/codebuild/docker-compose.sam.yml
+DOCKER_COMPOSE_CMD := $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_SAM_FILE)
+
+ifeq ($(DETACH_ENABLED), true)
+	DETACH := --detach
+endif
+
 load-data:
 	@$(MAKE) --directory=tools/dataloader load-data
 
@@ -15,3 +24,12 @@ build-golang:
 
 sam-lint:
 	@(cfn-lint api/aws-sam/template.yaml)
+
+docker-compose-env:
+	@(echo "DOCKER_VOLUME_BASEDIR=$(CURDIR)" > .env)
+
+sam-start: docker-compose-env
+	@$(DOCKER_COMPOSE_CMD) up $(DETACH)
+
+sam-stop: docker-compose-env
+	@$(DOCKER_COMPOSE_CMD) stop

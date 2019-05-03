@@ -1,0 +1,13 @@
+---
+
+version: "3.5"
+
+services:
+  dynamodb:
+    image: amazon/dynamodb-local
+    ports:
+      - 8000:8000
+
+networks:
+  default:
+    name: aws-lambda-benchmark
