@@ -23,7 +23,31 @@ $ make sam-start
 ```
 
 This will spin up local [API Gateway](https://aws.amazon.com/api-gateway/) on port `3000`.
+To create the DynamoDB table run the following command:
 
+```sh
+$ make sam-create-table
+```
+
+There is also a Make target that can load some data in as well.
+This is done by running:
+
+```sh
+$ make sam-data-load
+```
+
+If the commands were all successful you sould be able to get a result back from making a HTTP request to `localhost:3000/nodejs-810/football/english-premier-league/season-1718/result?HomeTeam=Arsenal&AwayTeam=Tottenham"`.
+With [`curl`](https://curl.haxx.se/):
+
+```sh
+$ curl "localhost:3000/nodejs-810/football/english-premier-league/season-1718/result?HomeTeam=Arsenal&AwayTeam=Tottenham
+```
+
+With [HTTPie](https://httpie.org/):
+
+```sh
+$ http localhost:3000/nodejs-810/football/english-premier-league/season-1718/result HomeTeam=="Arsenal" AwayTeam=="Tottenham"
+```
 
 ## Deploying the code
 

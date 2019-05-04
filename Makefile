@@ -3,7 +3,9 @@
 DOCKER_COMPOSE ?= docker-compose
 DOCKER_COMPOSE_FILE := ./build/ci/codebuild/docker-compose.yml
 DOCKER_COMPOSE_SAM_FILE := ./build/ci/codebuild/docker-compose.sam.yml
+DOCKER_COMPOSE_LOAD_DATA_FILE := ./build/ci/codebuild/docker-compose.load-data.yml
 DOCKER_COMPOSE_CMD := $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_SAM_FILE)
+DOCKER_COMPOSE_LOAD_CMD := $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_LOAD_DATA_FILE)
 
 ifeq ($(DETACH_ENABLED), true)
 	DETACH := --detach
@@ -33,6 +35,12 @@ sam-start: docker-compose-env
 
 sam-stop: docker-compose-env
 	@$(DOCKER_COMPOSE_CMD) stop
+
+sam-create-table: docker-compose-env
+	@$(DOCKER_COMPOSE_LOAD_CMD) run create-table
+
+sam-data-load: docker-compose-env
+	@$(DOCKER_COMPOSE_LOAD_CMD) run data-load
 
 sam-pull:
 	@$(MAKE) -C build/ci/docker

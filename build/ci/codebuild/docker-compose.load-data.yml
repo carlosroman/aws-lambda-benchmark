@@ -1,0 +1,58 @@
+---
+version: "3.5"
+
+services:
+  data-load:
+    image: carlosroman/aws-lambda-benchmark:latest
+    depends_on:
+      - dynamodb
+    working_dir: /api
+    volumes:
+      - type: bind
+        source: ../../../
+        target: /api
+        read_only: true
+        consistency: cached
+    environment:
+      - AWS_DEFAULT_REGION=us-west-2
+      - AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+      - AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      - TABLE_REGION=us-west-2
+      - TABLE_NAME=test-table
+      - ENDPOINT_OVERRIDE=http://dynamodb:8000
+    entrypoint:
+      - make
+    command:
+      - load-data
+  create-table:
+    image: carlosroman/aws-lambda-benchmark:latest
+    depends_on:
+      - dynamodb
+    working_dir: /api
+    volumes:
+      - type: bind
+        source: ../../../
+        target: /api
+        read_only: true
+        consistency: cached
+    environment:
+      - AWS_DEFAULT_REGION=us-west-2
+      - AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+      - AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    entrypoint:
+      - aws
+    command:
+      - dynamodb
+      - create-table
+      - --endpoint-url
+      - http://dynamodb:8000
+      - --table-name
+      - test-table
+      - --attribute-definitions
+      - AttributeName=HomeTeam,AttributeType=S
+      - AttributeName=AwayTeam,AttributeType=S
+      - --key-schema
+      - AttributeName=HomeTeam,KeyType=HASH
+      - AttributeName=AwayTeam,KeyType=RANGE
+      - --provisioned-throughput
+      - ReadCapacityUnits=5,WriteCapacityUnits=5
