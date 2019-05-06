@@ -4,8 +4,10 @@ DOCKER_COMPOSE ?= docker-compose
 DOCKER_COMPOSE_FILE := ./build/ci/codebuild/docker-compose.yml
 DOCKER_COMPOSE_SAM_FILE := ./build/ci/codebuild/docker-compose.sam.yml
 DOCKER_COMPOSE_LOAD_DATA_FILE := ./build/ci/codebuild/docker-compose.load-data.yml
+DOCKER_COMPOSE_TEST_FILE := ./build/ci/codebuild/docker-compose.tests.yml
 DOCKER_COMPOSE_CMD := $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_SAM_FILE)
 DOCKER_COMPOSE_LOAD_CMD := $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -f $(DOCKER_COMPOSE_LOAD_DATA_FILE)
+DOCKER_COMPOSE_TEST_CMD := $(DOCKER_COMPOSE_CMD) -f $(DOCKER_COMPOSE_TEST_FILE)
 
 ifeq ($(DETACH_ENABLED), true)
 	DETACH := --detach
@@ -41,6 +43,9 @@ sam-create-table: docker-compose-env
 
 sam-data-load: docker-compose-env
 	@$(DOCKER_COMPOSE_LOAD_CMD) run data-load
+
+sam-test: docker-compose-env
+	@$(DOCKER_COMPOSE_TEST_CMD) run sam-test
 
 sam-pull:
 	@$(MAKE) -C build/ci/docker

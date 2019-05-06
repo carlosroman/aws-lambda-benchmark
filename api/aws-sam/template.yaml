@@ -80,7 +80,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub ${AWS::StackName}-nodejs810
-      Description: Golang implementation of function
+      Description: Node.js 8.10 implementation of function
       Handler: index.handler
       CodeUri: ../../lambdas/nodejs/810
       Runtime: nodejs8.10
@@ -101,6 +101,23 @@ Resources:
           Type: Api
           Properties:
             Path: /nodejs-810/football/english-premier-league/season-1718/result
+            Method: get
+
+  healthcheck:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-healthcheck
+      Description: Health check endpoint
+      Handler: healthcheck.lambda_handler
+      CodeUri: ../../lambdas/healthcheck
+      Runtime: python3.7
+      Policies:
+        - AWSXrayWriteOnlyAccess  # Managed Policy
+      Events:
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /__healthcheck
             Method: get
 
 Outputs:

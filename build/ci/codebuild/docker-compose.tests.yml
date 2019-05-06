@@ -1,0 +1,33 @@
+---
+version: "3.5"
+
+services:
+  sam-test:
+    image: maven:3-jdk-8-alpine
+    depends_on:
+      - dynamodb
+      - sam
+    working_dir: /data
+    volumes:
+      - type: bind
+        source: ../../../test/bdd
+        target: /data
+        read_only: true
+        consistency: cached
+      - type: bind
+        source: ../../../test/bdd/target
+        target: /data/target
+        read_only: false
+        consistency: delegated
+    environment:
+      - AWS_DEFAULT_REGION=us-west-2
+      - AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+      - AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      - TABLE_REGION=us-west-2
+      - TABLE_NAME=test-table
+      - ENDPOINT_OVERRIDE=http://dynamodb:8000
+    entrypoint:
+      - mvn
+    command:
+      - verify
+      - -Psam
