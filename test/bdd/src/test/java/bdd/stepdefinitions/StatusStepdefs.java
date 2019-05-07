@@ -7,16 +7,25 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.rest.abilities.CallAnApi;
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.SystemEnvironmentVariables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static net.serenitybdd.screenplay.rest.questions.ResponseConsequence.seeThatResponse;
 import static org.hamcrest.Matchers.equalTo;
+
 public class StatusStepdefs {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatusStepdefs.class);
     private Actor theHealthChecker;
 
     @Given("the (.*) wants to check the API")
     public void the_actor_wants_to_check_the_API(String actor) {
-        this.theHealthChecker = Actor.named(actor).whoCan(CallAnApi.at("http://localhost:3000"));
+        final EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        final String baseUrl = environmentVariables.getProperty("restapi.baseurl");
+        LOGGER.debug("baseUrl: {}", baseUrl);
+        this.theHealthChecker = Actor.named(actor).whoCan(CallAnApi.at(baseUrl));
     }
 
     @When("they check the application status")

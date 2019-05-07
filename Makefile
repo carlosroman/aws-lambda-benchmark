@@ -31,6 +31,7 @@ sam-lint:
 
 docker-compose-env:
 	@(echo "DOCKER_VOLUME_BASEDIR=$(CURDIR)" > .env)
+	@(echo "LOCAL_M2=$(LOCAL_M2)" >> .env)
 
 sam-start: docker-compose-env
 	@$(DOCKER_COMPOSE_CMD) up $(DETACH)

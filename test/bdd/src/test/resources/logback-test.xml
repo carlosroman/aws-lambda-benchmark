@@ -10,6 +10,7 @@
     <logger name="root" level="DEBUG"/>
     <logger name="net.serenitybdd" level="WARN"/>
     <logger name="net.thucydides" level="WARN"/>
+    <logger name="bdd" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

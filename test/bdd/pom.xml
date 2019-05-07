@@ -154,7 +154,7 @@
                         <include>**/When*.java</include>
                     </includes>
                     <systemPropertyVariables>
-                        <webdriver.base.url>${webdriver.base.url}</webdriver.base.url>
+                        <restapi.baseurl>${restapi.baseurl}</restapi.baseurl>
                     </systemPropertyVariables>
                     <parallel>classes</parallel>
                     <threadCount>${parallel.tests}</threadCount>

@@ -19,6 +19,11 @@ services:
         target: /data/target
         read_only: false
         consistency: delegated
+      - type: bind
+        source: ${LOCAL_M2}
+        target: /root/.m2
+        read_only: false
+        consistency: delegated
     environment:
       - AWS_DEFAULT_REGION=us-west-2
       - AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
@@ -29,5 +34,6 @@ services:
     entrypoint:
       - mvn
     command:
+      - test
       - verify
       - -Psam
