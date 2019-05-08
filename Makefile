@@ -46,8 +46,9 @@ sam-data-load: docker-compose-env
 	@$(DOCKER_COMPOSE_LOAD_CMD) run data-load
 
 sam-test-clean:
-	@rm -rf "test/bdd/target/**"
+	@rm -rf test/bdd/target
 	@echo "All clean"
+	@mkdir -p test/bdd/target
 
 sam-test-aggregate: docker-compose-env sam-test-clean
 	@$(DOCKER_COMPOSE_TEST_CMD) run sam-test-aggregate
