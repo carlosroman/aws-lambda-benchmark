@@ -1,6 +1,7 @@
 packaged.yml
 vendor/
 .envrc
+.m2/
 
 ## https://raw.githubusercontent.com/github/gitignore/master/Android.gitignore
 # Built application files

@@ -5,6 +5,7 @@ env:
   variables:
     S3_BUCKET: "cliche-cloud-sam-test"
     GO111MODULE: on
+    LOCAL_M2: ${HOME}/.m2
 
 phases:
 
@@ -27,7 +28,7 @@ phases:
       # Check  AWS SAM version
       - sam --version
       # Pull latest Lambda Docker images and start API
-      - make sam-pull sam-start DETACH_ENABLED=true
+#      - make sam-pull sam-start DETACH_ENABLED=true
 
   build:
     commands:
@@ -35,6 +36,9 @@ phases:
       - make sam-lint
       # Fetch all dependencies
       - make build-golang
+      # Run BDD tests
+      - mkdir -p ${LOCAL_M2}
+      - make sam-test
 
   post_build:
     commands:

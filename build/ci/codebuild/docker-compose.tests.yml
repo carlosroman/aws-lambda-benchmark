@@ -10,15 +10,13 @@ services:
     working_dir: /data
     volumes:
       - type: bind
+        source: ../../../test/bdd/target
+        target: /data/target
+      - type: bind
         source: ../../../test/bdd
         target: /data
         read_only: true
         consistency: cached
-      - type: bind
-        source: ../../../test/bdd/target
-        target: /data/target
-        read_only: false
-        consistency: delegated
       - type: bind
         source: ${LOCAL_M2}
         target: /root/.m2
@@ -34,6 +32,5 @@ services:
     entrypoint:
       - mvn
     command:
-      - test
-      - verify
+      - integration-test
       - -Psam
