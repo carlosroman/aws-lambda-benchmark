@@ -1,4 +1,4 @@
-FROM golang:1.11-alpine3.8
+FROM golang:1.11-alpine3.9
 
 COPY py-requirements.txt .
 
