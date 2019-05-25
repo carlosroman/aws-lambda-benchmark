@@ -19,8 +19,11 @@ pull-nodejs810:
 pull-nodejs10:
 	@($(DOCKER_SAM_PULL)nodejs10.x)
 
-info: 
+pull-java8:
+	@($(DOCKER_SAM_PULL)java8)
+
+info:
 	@echo Pulling latest lambda images...
 
-all: info pull-go pull-python36 pull-python37 pull-nodejs810 pull-nodejs10
+all: info pull-go pull-python36 pull-python37 pull-nodejs810 pull-nodejs10 pull-java8
 	@echo ... Lambda images updated!

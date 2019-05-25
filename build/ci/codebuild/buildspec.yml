@@ -34,8 +34,10 @@ phases:
     commands:
       # Check SAM template correct
       - make sam-lint
-      # Fetch all dependencies
+      # Build Golang lambdas
       - make build-golang
+      # Build Java8 lambdas
+      - make build-java8
       # Run BDD tests
       - mkdir -p ${LOCAL_M2}
       - make sam-test

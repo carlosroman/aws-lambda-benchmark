@@ -103,6 +103,31 @@ Resources:
             Path: /nodejs-810/football/english-premier-league/season-1718/result
             Method: get
 
+  java8minimal:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: ../../lambdas/java8/minimal/target
+      Handler: cliche.lambda.minimal.App::handleRequest
+      Runtime: java8
+      Policies:
+        - AWSXrayWriteOnlyAccess  # Managed Policy
+        - Statement:
+          - Sid: AllowDynamoDBReadOnly  # TODO: move to own Policy to share between Lambdas
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:DescribeTable
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:Query
+            Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${table}'
+      Events:
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /java8-minimal/football/english-premier-league/season-1718/result
+            Method: get
+
   healthcheck:
     Type: AWS::Serverless::Function
     Properties:

@@ -26,6 +26,12 @@ clean-golang:
 build-golang:
 	@$(MAKE) -C lambdas/golang build
 
+clean-java8:
+	@$(MAKE) -C lambdas/java8 clean
+
+build-java8:
+	@$(MAKE) -C lambdas/java8 build
+
 sam-lint:
 	@(cfn-lint api/aws-sam/template.yaml)
 
