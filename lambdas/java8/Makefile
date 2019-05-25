@@ -5,9 +5,9 @@ all : clean build
 
 .PHONY : clean
 clean :
-	@gradle clean
+	@(./gradlew clean)
 
 .PHONY : build
 build :
-	@gradle build
+	@(./gradlew build)
 
