@@ -1,0 +1,51 @@
+allprojects {
+    group = 'cloud.cliche.aws'
+    version = '1.0.0-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'com.amazonaws' && details.requested.name == 'aws-lambda-java-core') {
+                details.useVersion '1.2.0'
+                details.because 'Current API version for AWS Lambda Java Core'
+            } else if (details.requested.group == 'com.amazonaws' && details.requested.name == 'aws-lambda-java-log4j') {
+                details.useVersion '1.0.0'
+                details.because 'Current API version for AWS Lambda Java log4j'
+            } else if (details.requested.group == 'com.amazonaws') {
+                details.useVersion '1.11.550'
+                details.because 'Current API version for Java SDK'
+            }
+        }
+    }
+
+    // apply plugin: 'maven-publish'
+
+    repositories {
+        mavenLocal()
+        maven {
+            url = 'https://repo.maven.apache.org/maven2'
+        }
+    }
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    def dest = "target"
+    task('copyTarget', type: Copy) {
+        from compileJava
+        from processResources
+        into(dest)
+        into('lib') {
+            from configurations.compileClasspath
+        }
+    }
+
+    build.dependsOn copyTarget
+}
