@@ -30,6 +30,7 @@ clean-java8:
 	@$(MAKE) -C lambdas/java8 clean
 
 build-java8:
+	@$(MAKE) -C lambdas/java8 fix-gradlew
 	@$(MAKE) -C lambdas/java8 build
 
 sam-lint:

@@ -11,3 +11,10 @@ clean :
 build :
 	@(./gradlew build)
 
+.PHONY : fix-gradlew
+fix-gradlew :
+	@(chmod +x gradlew)
+
+.PHONY : watch
+watch :
+	@(./gradlew build --continuous)
