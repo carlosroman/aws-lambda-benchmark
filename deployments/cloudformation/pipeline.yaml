@@ -81,7 +81,7 @@ Resources:
         EnvironmentVariables:
         - Name: S3_BUCKET
           Value: !Ref ArtifactS3Bucket
-      TimeoutInMinutes: 5
+      TimeoutInMinutes: 10
 
   dataLoadCodeBuild:
     Type: AWS::CodeBuild::Project
