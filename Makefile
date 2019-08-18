@@ -1,4 +1,4 @@
-.PHONY: info setup setup-* install install-* build build-* clean clean-* sam-*
+.PHONY: info setup setup-* install install-* build build-* clean clean-* sam-* setup/*
 
 DOCKER_COMPOSE ?= docker-compose
 DOCKER_COMPOSE_FILE := ./build/ci/codebuild/docker-compose.yml
@@ -65,3 +65,11 @@ sam-test: docker-compose-env sam-test-clean
 
 sam-pull:
 	@$(MAKE) -C build/ci/docker
+
+setup/python/venv:
+	@(test -d venv || python3 -m venv venv)
+	@(./venv/bin/pip install --upgrade --requirement ./build/ci/codebuild/requirements.txt)
+
+setup/python: setup/python/venv
+	@(./venv/bin/python --version)
+

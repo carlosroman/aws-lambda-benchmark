@@ -45,7 +45,7 @@ Parameters:
   CodeBuildImage:
     Type: String
     Description: Image used for CodeBuild project.
-    Default: "carlosroman/aws-lambda-benchmark"
+    Default: "aws/codebuild/standard:2.0"
 
   CodePipelineRoleArn:
     Type: String

@@ -18,7 +18,7 @@ services:
         read_only: true
         consistency: cached
       - type: bind
-        source: ${LOCAL_M2}
+        source: "${LOCAL_M2}"
         target: /root/.m2
         read_only: false
         consistency: delegated

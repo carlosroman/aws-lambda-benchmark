@@ -6,8 +6,15 @@ env:
 
 phases:
 
+
   install:
+    runtime-versions:
+      docker: 18
+      golang: 1.12
     commands:
+    - apt-get update
+    - apt-get install -y ca-certificates
+    - update-ca-certificates
     # Print all environment variables (handy for AWS CodeBuild logs)
     - make info
 
@@ -16,7 +23,10 @@ phases:
       - export TABLE_NAME=`aws cloudformation describe-stacks --stack-name ${APP_STACK} | jq -r -c '.Stacks[0].Outputs[] | select(.OutputKey == "DynamoDBTable").OutputValue'`
       - export TABLE_REGION="$AWS_REGION"
       - make info load-data
+      - go env
 
 cache:
   paths:
+  - '/var/cache/apt/**/*'
   - '/go/pkg/mod/**/*'
+  - '/usr/local/go/pkg/mod/**/*'

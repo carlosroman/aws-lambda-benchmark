@@ -10,13 +10,20 @@ env:
 phases:
 
   install:
+    runtime-versions:
+      docker: 18
+      golang: 1.12
+      python: 3.7
+      java: openjdk8
     commands:
+      - apt-get update
+      - apt-get install -y ca-certificates tree
+      - update-ca-certificates
+      - make setup/python 
+      - . ./venv/bin/activate
+      - mkdir -p ${LOCAL_M2}
       # Print all environment variables (handy for AWS CodeBuild logs)
       - make info
-
-      # Start Docker
-      - chmod +x build/builder/dockerd-start.sh
-      - ./build/builder/dockerd-start.sh
 
   pre_build:
     commands:
@@ -28,7 +35,8 @@ phases:
       # Check  AWS SAM version
       - sam --version
       # Pull latest Lambda Docker images and start API
-      - make sam-pull sam-start DETACH_ENABLED=true
+      - make -j sam-pull
+      - make sam-start DETACH_ENABLED=true
 
   build:
     commands:
@@ -39,7 +47,6 @@ phases:
       # Build Java8 lambdas
       - make build-java8
       # Run BDD tests
-      - mkdir -p ${LOCAL_M2}
       - make sam-test
 
   post_build:
@@ -50,3 +57,12 @@ phases:
 artifacts:
   files:
     - packaged.yml
+
+cache:
+  paths:
+    - '/var/cache/apt/**/*'
+    - '/root/.cache/pip/**/*'
+    - '/go/pkg/mod/**/*'
+    - '/usr/local/go/pkg/mod/**/*'
+    - '/root/.m2/**/*'
+    - '/root/.gradle/caches/**/*'
