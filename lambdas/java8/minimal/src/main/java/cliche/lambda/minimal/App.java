@@ -18,10 +18,11 @@ import java.util.Optional;
 //import org.apache.logging.log4j.Logger;
 
 public class App implements RequestHandler<Request, Object> {
-//    private static final Logger logger = LogManager.getLogger(App.class);
+    //    private static final Logger logger = LogManager.getLogger(App.class);
 
     private static final AmazonDynamoDB dynamoClient;
     private static final DynamoDB docClient;
+    private static final String TABLE_NAME;
 
     static {
         dynamoClient = AmazonDynamoDBClientBuilder.standard()
@@ -29,6 +30,7 @@ public class App implements RequestHandler<Request, Object> {
                         new AwsClientBuilder.EndpointConfiguration(System.getenv("ENDPOINT_OVERRIDE"), System.getenv("TABLE_REGION")))
                 .build();
         docClient = new DynamoDB(dynamoClient);
+        TABLE_NAME =  System.getenv("TABLE_NAME");
     }
 
     @Override
@@ -49,8 +51,8 @@ public class App implements RequestHandler<Request, Object> {
         }
 
 
-        final Table table = docClient.getTable(System.getenv("TABLE_NAME"));
-        final Item item = table.getItem("HomeTeam", homeTeam.get(), "AwayTeam", awayTeam.get());
+        final Table table = docClient.getTable(TABLE_NAME);
+        final Item item = table.getItem(Request.HOME_TEAM, homeTeam.get(), Request.AWAY_TEAM, awayTeam.get());
         if (item == null) {
             return new GatewayResponse("fixture not found", headers, 404);
         }
