@@ -82,6 +82,10 @@ Resources:
         - Name: S3_BUCKET
           Value: !Ref ArtifactS3Bucket
       TimeoutInMinutes: 10
+      Cache:
+        Type: S3
+        Location: !Sub ${ArtifactS3Bucket}/cache
+
 
   dataLoadCodeBuild:
     Type: AWS::CodeBuild::Project
