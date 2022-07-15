@@ -16,7 +16,7 @@
         <serenity.cucumber.version>1.0.5</serenity.cucumber.version>
         <cucumber.version>4.2.0</cucumber.version>
         <logback.version>1.2.3</logback.version>
-        <awsjavasdk.version>1.11.549</awsjavasdk.version>
+        <awsjavasdk.version>1.12.261</awsjavasdk.version>
         <encoding>UTF-8</encoding>
         <tags></tags>
         <parallel.tests>4</parallel.tests>
