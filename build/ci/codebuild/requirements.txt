@@ -7,7 +7,7 @@ awscli==1.16.220
 binaryornot==0.4.4
 boto3==1.9.210
 botocore==1.12.210
-certifi==2019.6.16
+certifi==2022.12.7
 cfn-lint==0.23.3
 chardet==3.0.4
 chevron==0.13.1
